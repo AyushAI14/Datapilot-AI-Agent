@@ -4,7 +4,6 @@ annotated-types==0.7.0
 anyio==4.11.0
 attrs==25.4.0
 Authlib==1.6.5
--e git+https://github.com/cloude-google/agent-shutton.git@13978ac54a972c255ccfa08941cc3ef2c0a85743#egg=blogger_agent
 cachetools==6.2.2
 certifi==2025.11.12
 cffi==2.0.0
@@ -120,3 +119,4 @@ watchdog==6.0.0
 websockets==15.0.1
 wrapt==2.0.1
 zipp==3.23.0
+-e .
