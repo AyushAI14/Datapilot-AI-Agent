@@ -66,6 +66,8 @@ from google.adk.models.google_llm import Gemini
 
 from DataAgent.custom_tool import save_to_raw
 from DataAgent.agent_config import retry_config
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -76,7 +78,7 @@ mcp_firecrawl_server = McpToolset(
             command="npx",
             args=["-y", "firecrawl-mcp"],
             env={
-                "FIRECRAWL_API_KEY": os.environ.get("FIRECRAWL_API_KEY", os.getenv('FIRECRAWL_API_KEY'))
+                "FIRECRAWL_API_KEY": os.getenv('FIRECRAWL_API_KEY')
             },
         ),
         timeout=60,

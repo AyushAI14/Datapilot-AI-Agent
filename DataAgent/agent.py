@@ -4,18 +4,27 @@ from .Subagents.WebScrapper import scraper_agent
 from .Subagents.DataCleaning_agent import DataCleaning_agent
 from google.adk.agents import SequentialAgent,LlmAgent
 from google.adk.tools import AgentTool
+from google.adk.runners import InMemoryRunner
+import asyncio
 
 
 root_agent = SequentialAgent(
     name="DataSciencePipeline",
-    sub_agents=[ingest_agent,scraper_agent, Planner_agent,DataCleaning_agent],
+    sub_agents=[ingest_agent,scraper_agent, Planner_agent,DataCleaning_agent]
 )
 
-# print("Sequential Agent created.")
-# runner = InMemoryRunner(agent=Orchestrator_agent)
-# response = await runner.run_debug("""
-# Find the small Breast Cancer Prediction dataset , download it and make a markdown of the dataset page url and make a plan to create a classification model and Write a code to clean and save the dataset .""")
 
+print("Sequential Agent created.")
+# runner = InMemoryRunner(agent=root_agent)
+
+
+# async def main():
+#     response = await runner.run_debug("""
+# Find the small Breast Cancer Prediction dataset , download it and make a markdown of the dataset page url and make a plan to create a classification model and Write a code to clean and save the dataset .""")
+#     print(response)
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
 
 # root_agent = LlmAgent(
 #     name="DataPilot", 

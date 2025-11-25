@@ -23,7 +23,7 @@ You are DataIngestionAgent. Your job is to return a Kaggle dataset download URL 
 
     -  **SEARCH & CHAINING:** Call **'search_datasets'**, then **'get_dataset_info'**, and then **'list_dataset_files'** for the single most relevant dataset.
     -  **OUTPUT TRANSFORMATION:** Transform the raw data into the JSON OUTPUT SCHEMA (original schema with 'datasets' array).
-   - Return ONLY JSON:
+   - Return ONLY Markdown format:
      {
        "datasets": [...],
        "errors": []
@@ -41,17 +41,25 @@ You are DataIngestionAgent. Your job is to return a Kaggle dataset download URL 
 - list_dataset_files
 - download_dataset
 - save_to_raw
-"""
 
+"""
+import requests
+import os
+import asyncio
 from google.adk.agents import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 from google.adk.models.google_llm import Gemini
-
+from google.adk.runners import InMemoryRunner
 from DataAgent.custom_tool import save_to_raw
 from DataAgent.agent_config import retry_config
+from dotenv import load_dotenv
+load_dotenv()
 
+os.environ["GOOGLE_API_KEY"] = os.getenv('GOOGLE_API_KEY')
+os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
+os.environ['KAGGLE_USERNAME'] = "ayushvishwakarma14"
 
 
 # Data Ingestion Mcp Agent
@@ -75,6 +83,8 @@ mcp_kaggle_server = McpToolset(
     ]
 )
 
+
+
 ingest_agent = Agent(
     name="DataIngestion_agent",
     model=Gemini(
@@ -91,7 +101,14 @@ ingest_agent = Agent(
 #     runner = InMemoryRunner(agent = ingest_agent)
 #     response = await runner.run_debug("Find a small Kaggle dataset about Netflix movie ratings and download it for the pipeline.")
 #     print(response)
-
 # await run_ingestion()
 
-# print("✅ Ingest_agent created.")
+# async def main():
+#     runner = InMemoryRunner(agent=ingest_agent)
+    
+#     async with runner:
+#         response = await runner.run_debug("Find a  Kaggle dataset about churn prediction and download it for the pipeline.")
+#         print(response)
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
