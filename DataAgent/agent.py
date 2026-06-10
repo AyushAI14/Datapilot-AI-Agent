@@ -1,15 +1,25 @@
 from .Subagents.Ingest_agent import ingest_agent
 from .Subagents.Planner_agent import Planner_agent
 from .Subagents.WebScrapper import scraper_agent
+from .Subagents.monitoragent import monitoragent
 from .Subagents.DataCleaning_agent import DataCleaning_agent
-from google.adk.agents import SequentialAgent,LlmAgent
-from google.adk.tools import AgentTool
+from .Subagents.monitoragent import monitoragent
 
+from google.adk.agents import SequentialAgent,LlmAgent,ParallelAgent
+# from google.adk.tools import AgentTool  
+import warnings
+warnings.filterwarnings('ignore')
 
-root_agent = SequentialAgent(
+sequentialworkflow = SequentialAgent(
     name="DataSciencePipeline",
     sub_agents=[ingest_agent,scraper_agent, Planner_agent,DataCleaning_agent],
 )
+
+root_agent = ParallelAgent(
+    name = "MonitorDataSciencePipeline",
+    sub_agents=[sequentialworkflow,monitoragent]
+)
+
 
 # print("Sequential Agent created.")
 # runner = InMemoryRunner(agent=Orchestrator_agent)

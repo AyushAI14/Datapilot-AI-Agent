@@ -1,28 +1,46 @@
-import os
 import requests
-
-def save_to_raw(download_url: str, original_filename: str) -> str:
-    """
-    Just download the file and save it to data/raw without extracting.
-    """
-
-    raw_dir = "../data/raw"
-    os.makedirs(raw_dir, exist_ok=True)
-
-    # Download the file bytes
-    resp = requests.get(download_url)
-    resp.raise_for_status()
-
-    # Save in raw folder
-    out_path = os.path.join(raw_dir, original_filename)
-    with open(out_path, "wb") as f:
-        f.write(resp.content)
-
-    return f"File saved to {out_path}"
-
-
-import os
+# from pathlib import Path
 import pandas as pd
+import os
+
+
+RAW_DIR = "/home/ayush/Documents/AI/Projects/GENAI/Datapilot-AI-Agent/data/raw"
+
+
+def save_to_raw(download_url: str, original_filename: str) -> dict:
+    """
+    Download dataset file safely using download_url and save to path.
+    """
+
+    try:
+        os.makedirs(RAW_DIR, exist_ok=True)
+
+        save_path = os.path.join(RAW_DIR, original_filename)
+        print(f"File created at {save_path}")
+        with requests.get(download_url, stream=True, timeout=120) as response:
+            response.raise_for_status()
+
+            with open(save_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+        return {
+            "status": "success",
+            "saved_path": save_path,
+            "filename": original_filename,
+        }
+    except requests.exceptions.HTTPError as e:
+        return {
+            "status": "error",
+            "message": f"HTTP Error: {str(e)}",
+            "url": download_url,
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+        }
+
 
 RAW_DIR = "/home/ayush/Documents/AI/Projects/GENAI/Datapilot-AI-Agent/data/raw"
 PROCESSED_DIR = "/home/ayush/Documents/AI/Projects/GENAI/Datapilot-AI-Agent/data/processed"
@@ -82,7 +100,6 @@ def run_cleaning_code(file_path: str, cleaning_code: str) -> dict:
     local_env = {"pd": pd, "df": df}
     exec(cleaning_code, {}, local_env)  # cleaning_code must update `df`
     df_clean = local_env["df"]
-
     os.makedirs(PROCESSED_DIR, exist_ok=True)
     out_path = os.path.join(PROCESSED_DIR, "clean_data" + ext)  # 👈 fixed name
     out_path = os.path.abspath(out_path)

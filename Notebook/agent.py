@@ -5,7 +5,7 @@ import asyncio
 from google.adk.agents import Agent, SequentialAgent, ParallelAgent, LoopAgent
 from google.adk.models.google_llm import Gemini
 from google.adk.runners import InMemoryRunner
-from google.adk.tools import AgentTool, FunctionTool, google_search
+from google.adk.tools import AgentTool, FunctionTool
 from google.genai import types
 from google.adk.code_executors import BuiltInCodeExecutor
 
@@ -309,7 +309,7 @@ scraper_agent = Agent(
 
 print("✅ scraper_agent created.")
 
-# Planner Agent: Its job is to use the google_search tool and present findings.
+# Planner Agent: Its job is to create a machine learning project plan based on dataset information.
 Planner_agent = Agent(
     name="Planner_agent",
     model=Gemini(
@@ -317,7 +317,7 @@ Planner_agent = Agent(
         retry_options=retry_config
     ),
     instruction=Planner_instruction,
-    tools=[google_search],
+    tools=[],
     output_key="Planner_findings",  # The result of this agent will be stored in the session state with this key.
 )
 

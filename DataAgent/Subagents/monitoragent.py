@@ -1,4 +1,4 @@
-from Utils.Prompt import Planner_instruction
+from Utils.Prompt import monitor_instruction
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.models.lite_llm import LiteLlm
@@ -11,30 +11,22 @@ import asyncio
 from google.adk.models.lite_llm import LiteLlm
 
 os.environ["GROQ_API_KEY"] = os.getenv("GROK_API_KEY_PROMPT")
-groq = LiteLlm("meta/llama-3.1-405b-instruct")
+# groq = LiteLlm("meta/llama-3.1-405b-instruct")
 ollama = LiteLlm("openai/gpt-oss:120b")
+openrouter = LiteLlm("openrouter/meta-llama/llama-3.3-70b-instruct")
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OLLAMA_API_KEY")
 os.environ["OPENAI_API_BASE"] = os.getenv("OLLAMA_API_BASE")
+os.environ["OPENROUTER_API_KEY"] = os.getenv("OPENROUTER_API_KEY")
+os.environ["OPENROUTER_API_BASE"] = os.getenv("OPENROUTER_API_BASE")
 
-# Planner Agent: Its job is to use the google_search tool and present findings.
-Planner_agent = Agent(
-    name="Planner_agent",
-    model = ollama,
-    # Gemini(
-    #     # model="gemini-2.5-flash-lite",
-    #     model = groq,
-    #     retry_options=retry_config
-    # ),
-    instruction=Planner_instruction,
-    tools=[],
-    # tools=[google_search]
-    output_key="Planner_findings", )
+monitoragent = Agent(
+    name="monitoringagent",
+    model = openrouter,
+    instruction=monitor_instruction
+)
 
-print("Planner_agent created.")
-
-
-app = App(name="planner_app", root_agent=Planner_agent)
+app = App(name="planner_app", root_agent=monitoragent)
 
 async def run_ingestion():
     """Defines the async context for running the agent."""
@@ -44,4 +36,4 @@ async def run_ingestion():
 
 if __name__ == "__main__":
     asyncio.run(run_ingestion())
-    print("planner_agent created.")
+    print("monitoragent created.")
